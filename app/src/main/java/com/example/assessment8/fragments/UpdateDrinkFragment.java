@@ -2,6 +2,7 @@ package com.example.assessment8.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +18,20 @@ import com.example.assessment8.databinding.FragmentUpdateDrinkBinding;
 import com.example.assessment8.db.AppDatabase;
 import com.example.assessment8.db.Drink;
 
-public class UpdateDrinkFragment extends Fragment {
+public class UpdateDrinkFragment extends Fragment
+{
     private static final String ARG_PARAM_DRINK = "ARG_PARAM_DRINK";
+    public static final String TAG = AddDrinkFragment.TAG;
     private Drink mDrink;
     AppDatabase db = null;
 
-    public UpdateDrinkFragment() {
+    public UpdateDrinkFragment()
+    {
         // Required empty public constructor
     }
 
-    public static UpdateDrinkFragment newInstance(Drink drink) {
+    public static UpdateDrinkFragment newInstance(Drink drink)
+    {
         UpdateDrinkFragment fragment = new UpdateDrinkFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM_DRINK, drink);
@@ -35,16 +40,20 @@ public class UpdateDrinkFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        if (getArguments() != null)
+        {
             mDrink = (Drink) getArguments().getSerializable(ARG_PARAM_DRINK);
         }
     }
 
     FragmentUpdateDrinkBinding binding;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         binding = FragmentUpdateDrinkBinding.inflate(inflater, container, false);
         db = Room.databaseBuilder(getActivity(), AppDatabase.class, "drinks-db")
                 .allowMainThreadQueries()
@@ -54,60 +63,77 @@ public class UpdateDrinkFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Update Drink");
 
         binding.seekBarAlcohol.setProgress((int) mDrink.getAlcohol());
-        binding.seekBarAlcohol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.seekBarAlcohol.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
                 binding.textViewAlcoholPercentage.setText(progress + "%");
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
 
             }
         });
 
-        if(mDrink.getSize() == 1.0){
+        if (mDrink.getSize() == 1.0)
+        {
             binding.radioGroupDrinkSize.check(R.id.radioButton1oz);
-        } else if(mDrink.getSize() == 5.0){
+        } else if (mDrink.getSize() == 5.0)
+        {
             binding.radioGroupDrinkSize.check(R.id.radioButton5oz);
-        } else if(mDrink.getSize() == 12.0){
+        } else if (mDrink.getSize() == 12.0)
+        {
             binding.radioGroupDrinkSize.check(R.id.radioButton12oz);
         }
 
-        if(mDrink.getType().equals("BEER")){
+        if (mDrink.getType().equals("BEER"))
+        {
             binding.radioGroupType.check(R.id.radioButtonBeer);
-        } else if(mDrink.getType().equals("WINE")){
+        } else if (mDrink.getType().equals("WINE"))
+        {
             binding.radioGroupType.check(R.id.radioButtonWine);
-        } else if(mDrink.getType().equals("SHOT")){
+        } else if (mDrink.getType().equals("SHOT"))
+        {
             binding.radioGroupType.check(R.id.radioButtonShot);
         }
 
-        binding.buttonUpdateDrink.setOnClickListener(new View.OnClickListener() {
+        binding.buttonUpdateDrink.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 //add code to update the current drink.
                 double alcohol = binding.seekBarAlcohol.getProgress();
                 double size = 1.0;
-                if(binding.radioGroupDrinkSize.getCheckedRadioButtonId() == R.id.radioButton5oz){
+                if (binding.radioGroupDrinkSize.getCheckedRadioButtonId() == R.id.radioButton5oz)
+                {
                     size = 5.0;
-                } else if(binding.radioGroupDrinkSize.getCheckedRadioButtonId() == R.id.radioButton12oz){
+                } else if (binding.radioGroupDrinkSize.getCheckedRadioButtonId() == R.id.radioButton12oz)
+                {
                     size = 12.0;
                 }
 
                 String type = "BEER";
-                if(binding.radioGroupType.getCheckedRadioButtonId() == R.id.radioButtonWine){
+                if (binding.radioGroupType.getCheckedRadioButtonId() == R.id.radioButtonWine)
+                {
                     type = "WINE";
-                } else if(binding.radioGroupType.getCheckedRadioButtonId() == R.id.radioButtonShot){
+                } else if (binding.radioGroupType.getCheckedRadioButtonId() == R.id.radioButtonShot)
+                {
                     type = "SHOT";
                 }
                 mDrink.setAlcohol(alcohol);
@@ -116,16 +142,15 @@ public class UpdateDrinkFragment extends Fragment {
 
                 //TODO: Update the drink in the database.
                 db.drinkDAO().update(mDrink);
-
-
-
                 mListener.doneUpdateDrink();
             }
         });
 
-        binding.buttonClose.setOnClickListener(new View.OnClickListener() {
+        binding.buttonClose.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 mListener.cancelUpdateDrink();
             }
         });
@@ -135,13 +160,24 @@ public class UpdateDrinkFragment extends Fragment {
     UpdateDrinkListener mListener;
 
     @Override
-    public void onAttach(@NonNull Context context) {
+    public void onAttach(@NonNull Context context)
+    {
         super.onAttach(context);
         mListener = (UpdateDrinkListener) context;
     }
 
-    public interface UpdateDrinkListener{
+    @Override
+    public void onDestroyView()
+    {
+        Log.d(TAG, "onDestroyView: db closing updatefragment");
+        db.close();
+        super.onDestroyView();
+    }
+
+    public interface UpdateDrinkListener
+    {
         void doneUpdateDrink();
+
         void cancelUpdateDrink();
     }
 }
