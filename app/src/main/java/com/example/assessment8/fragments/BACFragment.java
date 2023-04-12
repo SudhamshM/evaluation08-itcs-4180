@@ -15,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.example.assessment8.Profile;
 import com.example.assessment8.R;
 import com.example.assessment8.databinding.DrinkRowItemBinding;
 import com.example.assessment8.databinding.FragmentBacBinding;
+import com.example.assessment8.db.AppDatabase;
 import com.example.assessment8.db.Drink;
 
 import java.util.ArrayList;
@@ -31,9 +33,15 @@ public class BACFragment extends Fragment {
 
     private Profile mProfile;
     FragmentBacBinding binding;
+
+    AppDatabase db = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentBacBinding.inflate(inflater, container, false);
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class, "drinks-db")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
         return binding.getRoot();
     }
     ArrayList<Drink> mDrinks = new ArrayList<>();
@@ -77,13 +85,14 @@ public class BACFragment extends Fragment {
                 mListener.gotoAddDrink();
             }
             return true;
-        } else if(item.getItemId() == R.id.action_reset){
+        } else if(item.getItemId() == R.id.action_reset)
+        {
             //Clearing the profile
             mProfile = null;
             mListener.clearProfile();
 
             //TODO: (Reset menu item) Delete all the drinks
-
+            db.drinkDAO().deleteAll();
 
             getDrinksAndNotifyAdapter();
             displayBacAndSetupUI();
@@ -91,8 +100,12 @@ public class BACFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getDrinksAndNotifyAdapter(){
+    private void getDrinksAndNotifyAdapter()
+    {
         //TODO: get all the drinks from the database and notify the adapter that the data has changed.
+        mDrinks.clear();
+        mDrinks.addAll(db.drinkDAO().getAll());
+        adapter.notifyDataSetChanged();
     }
 
     private void displayBacAndSetupUI(){
@@ -176,6 +189,7 @@ public class BACFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         //TODO: delete the drink from the database
+                        db.drinkDAO().delete(mDrink);
 
                         getDrinksAndNotifyAdapter();
                         displayBacAndSetupUI();

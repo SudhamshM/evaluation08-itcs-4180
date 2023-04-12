@@ -10,14 +10,17 @@ import android.widget.SeekBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import com.example.assessment8.R;
 import com.example.assessment8.databinding.FragmentUpdateDrinkBinding;
+import com.example.assessment8.db.AppDatabase;
 import com.example.assessment8.db.Drink;
 
 public class UpdateDrinkFragment extends Fragment {
     private static final String ARG_PARAM_DRINK = "ARG_PARAM_DRINK";
     private Drink mDrink;
+    AppDatabase db = null;
 
     public UpdateDrinkFragment() {
         // Required empty public constructor
@@ -43,6 +46,10 @@ public class UpdateDrinkFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentUpdateDrinkBinding.inflate(inflater, container, false);
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class, "drinks-db")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
         return binding.getRoot();
     }
 
@@ -108,6 +115,8 @@ public class UpdateDrinkFragment extends Fragment {
                 mDrink.setType(type);
 
                 //TODO: Update the drink in the database.
+                db.drinkDAO().update(mDrink);
+
 
 
                 mListener.doneUpdateDrink();

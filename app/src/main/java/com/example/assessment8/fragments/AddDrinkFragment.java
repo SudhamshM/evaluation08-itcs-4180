@@ -10,20 +10,30 @@ import android.widget.SeekBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import com.example.assessment8.R;
 import com.example.assessment8.databinding.FragmentAddDrinkBinding;
+import com.example.assessment8.db.AppDatabase;
+import com.example.assessment8.db.Drink;
 
-public class AddDrinkFragment extends Fragment {
+public class AddDrinkFragment extends Fragment
+{
+    public static final String TAG = "eval8";
     public AddDrinkFragment() {
         // Required empty public constructor
     }
 
     FragmentAddDrinkBinding binding;
+    AppDatabase db = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAddDrinkBinding.inflate(inflater, container, false);
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class, "drinks-db")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
         return binding.getRoot();
     }
 
@@ -70,7 +80,8 @@ public class AddDrinkFragment extends Fragment {
 
 
                 //TODO: Store the new drink to the database
-
+                Drink drink = new Drink(alcohol, size, type);
+                db.drinkDAO().insertAll(drink);
                 mListener.doneAddDrink();
             }
         });

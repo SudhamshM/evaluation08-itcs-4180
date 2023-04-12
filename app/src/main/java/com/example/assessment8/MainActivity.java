@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements BACFragment.BACFr
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        if(sharedPref.contains("profile")){
+        if(sharedPref.contains("profile"))
+        {
             mProfile = gson.fromJson(sharedPref.getString("profile", ""), Profile.class);
         }
 

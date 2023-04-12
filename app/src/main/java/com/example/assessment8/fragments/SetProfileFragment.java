@@ -17,7 +17,8 @@ import com.example.assessment8.R;
 import com.example.assessment8.databinding.FragmentSetProfileBinding;
 
 
-public class SetProfileFragment extends Fragment {
+public class SetProfileFragment extends Fragment
+{
     public SetProfileFragment() {
         // Required empty public constructor
     }

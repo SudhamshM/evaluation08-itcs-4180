@@ -1,12 +1,25 @@
 package com.example.assessment8.db;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Entity(tableName = "drinks")
 public class Drink implements Serializable {
-    public double alcohol, size;
+
+    @ColumnInfo
+    public double alcohol;
+    @ColumnInfo
+    public double size;
+    @ColumnInfo
     public String type;
+    @ColumnInfo
     public Long addedOn; //needs to be stored as a long
+
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
 
@@ -58,5 +71,17 @@ public class Drink implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Drink{" +
+                "alcohol=" + alcohol +
+                ", size=" + size +
+                ", type='" + type + '\'' +
+                ", addedOn=" + addedOn +
+                ", id=" + id +
+                '}';
     }
 }
